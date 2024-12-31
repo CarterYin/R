@@ -1,0 +1,1219 @@
+% 若编译失败，且生成 .synctex(busy) 辅助文件，可能有两个原因：
+% 1. 需要插入的图片不存在：Ctrl + F 搜索 'figure' 将这些代码注释/删除掉即可
+% 2. 路径/文件名含中文或空格：更改路径/文件名即可
+
+% ------------------------------------------------------------- %
+% >> ------------------ 文章宏包及相关设置 ------------------ << %
+% 设定文章类型与编码格式
+\documentclass[UTF8]{report}		
+
+% 本文特殊宏包
+    \usepackage{siunitx} % 埃米单位
+
+% 本文的特殊宏定义
+\def\Im{\mathrm{\,Im\,}}
+\def\Re{\mathrm{\,Re\,}}
+\def\Ln{\mathrm{\,Ln\,}}
+\def\Arg{\mathrm{\,Arg\,}}
+\def\Arccos{\mathrm{\,Arccos\,}}
+\def\Arcsin{\mathrm{\,Arcsin\,}}
+\def\Arctan{\mathrm{\,Arctan\,}}
+
+% 通用宏定义
+\def\N{\mathbb{N}}
+\def\F{\mathbb{F}}
+\def\Z{\mathbb{Z}}
+\def\Q{\mathbb{Q}}
+\def\R{\mathbb{R}}
+\def\C{\mathbb{C}}
+\def\T{\mathbb{T}}
+\def\S{\mathbb{S}}
+\def\A{\mathbb{A}}
+\def\I{\mathscr{I}}
+\def\d{\mathrm{d}}
+\def\p{\partial}
+
+
+% 导入基本宏包
+    \usepackage[UTF8]{ctex}     % 设置文档为中文语言
+    \usepackage[colorlinks, linkcolor=blue, anchorcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}  % 宏包：自动生成超链接 (此宏包与标题中的数学环境冲突)
+    % \usepackage{docmute}    % 宏包：子文件导入时自动去除导言区，用于主/子文件的写作方式，\include{./51单片机笔记}即可。注：启用此宏包会导致.tex文件capacity受限。
+    \usepackage{amsmath}    % 宏包：数学公式
+    \usepackage{mathrsfs}   % 宏包：提供更多数学符号
+    \usepackage{amssymb}    % 宏包：提供更多数学符号
+    \usepackage{pifont}     % 宏包：提供了特殊符号和字体
+    \usepackage{extarrows}  % 宏包：更多箭头符号
+    \usepackage{multicol}   % 宏包：支持多栏 
+    \usepackage{graphicx}   % 宏包：插入图片
+    \usepackage{float}      % 宏包：设置图片浮动位置
+    %\usepackage{article}    % 宏包：使文本排版更加优美
+    \usepackage{tikz}       % 宏包：绘图工具
+    %\usepackage{pgfplots}   % 宏包：绘图工具
+    \usepackage{enumerate}  % 宏包：列表环境设置
+    \usepackage{enumitem}   % 宏包：列表环境设置
+    \usepackage{listings}
+    \usepackage{xcolor}
+
+% 文章页面margin设置
+    \usepackage[a4paper]{geometry}
+        \geometry{top=1in}  % 1 inch= 2.46 cm, 0.75 inch = 1.85 cm
+        \geometry{bottom=1in}
+        \geometry{left=0.75in}
+        \geometry{right=0.75in}   % 设置上下左右页边距
+        \geometry{marginparwidth=1.75cm}    % 设置边注距离（注释、标记等）
+
+% 配置数学环境
+    \usepackage{amsthm} % 宏包：数学环境配置
+    % theorem-line 环境自定义
+        \newtheoremstyle{MyLineTheoremStyle}% <name>
+            {11pt}% <space above>
+            {11pt}% <space below>
+            {}% <body font> 使用默认正文字体
+            {}% <indent amount>
+            {\bfseries}% <theorem head font> 设置标题项为加粗
+            {：}% <punctuation after theorem head>
+            {.5em}% <space after theorem head>
+            {\textbf{#1}\thmnumber{#2}\ \ (\,\textbf{#3}\,)}% 设置标题内容顺序
+        \theoremstyle{MyLineTheoremStyle} % 应用自定义的定理样式
+        \newtheorem{LineTheorem}{Theorem.\,}
+    % theorem-block 环境自定义
+        \newtheoremstyle{MyBlockTheoremStyle}% <name>
+            {11pt}% <space above>
+            {11pt}% <space below>
+            {}% <body font> 使用默认正文字体
+            {}% <indent amount>
+            {\bfseries}% <theorem head font> 设置标题项为加粗
+            {：\\ \indent}% <punctuation after theorem head>
+            {.5em}% <space after theorem head>
+            {\textbf{#1}\thmnumber{#2}\ \ (\,\textbf{#3}\,)}% 设置标题内容顺序
+        \theoremstyle{MyBlockTheoremStyle} % 应用自定义的定理样式
+        \newtheorem{BlockTheorem}[LineTheorem]{Theorem.\,} % 使用 LineTheorem 的计数器
+    % definition 环境自定义
+        \newtheoremstyle{MySubsubsectionStyle}% <name>
+            {11pt}% <space above>
+            {11pt}% <space below>
+            {}% <body font> 使用默认正文字体
+            {}% <indent amount>
+            {\bfseries}% <theorem head font> 设置标题项为加粗
+            { \indent}% <punctuation after theorem head>
+            {0pt}% <space after theorem head>
+            {\textbf{#3}}% 设置标题内容顺序
+        \theoremstyle{MySubsubsectionStyle} % 应用自定义的定理样式
+        \newtheorem{definition}{}
+
+%宏包：有色文本框（proof环境）及其设置
+    \usepackage[dvipsnames,svgnames]{xcolor}    %设置插入的文本框颜色
+    \usepackage[strict]{changepage}     % 提供一个 adjustwidth 环境
+    \usepackage{framed}     % 实现方框效果
+        \definecolor{graybox_color}{rgb}{0.95,0.95,0.96} % 文本框颜色。修改此行中的 rgb 数值即可改变方框纹颜色，具体颜色的rgb数值可以在网站https://colordrop.io/ 中获得。（截止目前的尝试还没有成功过，感觉单位不一样）（找到喜欢的颜色，点击下方的小眼睛，找到rgb值，复制修改即可）
+        \newenvironment{graybox}{%
+        \def\FrameCommand{%
+        \hspace{1pt}%
+        {\color{gray}\small \vrule width 2pt}%
+        {\color{graybox_color}\vrule width 4pt}%
+        \colorbox{graybox_color}%
+        }%
+        \MakeFramed{\advance\hsize-\width\FrameRestore}%
+        \noindent\hspace{-4.55pt}% disable indenting first paragraph
+        \begin{adjustwidth}{}{7pt}%
+        \vspace{2pt}\vspace{2pt}%
+        }
+        {%
+        \vspace{2pt}\end{adjustwidth}\endMakeFramed%
+        }
+
+% 外源代码插入设置
+    % matlab 代码插入设置
+    %\usepackage{matlab-prettifier}
+    %    \lstset{
+    %        style=Matlab-editor,  % 继承matlab代码颜色等
+    %    }
+    %\usepackage[most]{tcolorbox} % 引入tcolorbox包 
+    %\usepackage{listings} % 引入listings包
+    %    \tcbuselibrary{listings, skins, breakable}
+    %    \newfontfamily\codefont{Consolas} % 定义需要的 codefont 字体
+    %    \lstdefinestyle{matlabstyle}{
+    %        language=Matlab,
+    %        basicstyle=\small\ttfamily\codefont,    % ttfamily 确保等宽 
+    %        breakatwhitespace=false,
+    %        breaklines=true,
+    %        captionpos=b,
+    %        keepspaces=true,
+    %        numbers=left,
+    %        numbersep=15pt,
+    %        showspaces=false,
+    %        showstringspaces=false,
+    %        showtabs=false,
+    %        tabsize=2
+    %    }
+    %    \newtcblisting{matlablisting}{
+    %        arc=2pt,        % 圆角半径
+    %        top=-5pt,
+    %        bottom=-5pt,
+    %        left=1mm,
+    %        listing only,
+    %        listing style=matlabstyle,
+    %        breakable,
+    %        colback=white   % 选一个合适的颜色
+    %    }
+
+    \definecolor{codegreen}{rgb}{0,0.6,0}
+    \definecolor{codegray}{rgb}{0.5,0.5,0.5}
+    \definecolor{codepurple}{rgb}{0.58,0,0.82}
+    \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+    \lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+    }
+
+    \lstset{style=mystyle}
+
+% table 支持
+    \usepackage{booktabs}   % 宏包：三线表
+    \usepackage{tabularray} % 宏包：表格排版
+    \usepackage{longtable}  % 宏包：长表格
+
+
+%figure 设置
+%    \usepackage{graphicx}  % 支持 jpg, png, eps, pdf 图片 
+%    \usepackage{svg}       % 支持 svg 图片
+%        \svgsetup{
+%             指向 inkscape.exe 的路径
+%            inkscapeexe = C:/aa_MySame/inkscape/bin/inkscape.exe, 
+%            inkscapeexe = C:/aa_MySame/inkscape/bin/inkscape.exe, 
+%             一定程度上修复导入后图片文字溢出几何图形的问题
+%            inkscapelatex = false                 
+%        }
+%    \usepackage{subcaption} % subfigure 子图支持
+
+%图表进阶设置
+%    \usepackage{caption}    % 图注、表注
+%        \captionsetup[figure]{name=图}  
+%        \captionsetup[table]{name=表}
+%        \captionsetup{labelfont=bf, font=small}
+%    \usepackage{float}     % 图表位置浮动设置 
+
+% 圆圈序号自定义
+    \newcommand*\circled[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=0.8pt, line width = 0.03em] (char) {\small \bfseries #1};}}   % TikZ solution
+
+% 列表设置
+%    \usepackage{enumitem}   % 宏包：列表环境设置
+%        \setlist[enumerate]{itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em} 
+%        \setlist[itemize]{itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em}
+%        \newlist{circledenum}{enumerate}{1} % 创建一个新的枚举环境  
+%        \setlist[circledenum,1]{  
+%            label=\protect\circled{\arabic*}, % 使用 \arabic* 来获取当前枚举计数器的值，并用 \circled 包装它  
+%            ref=\arabic*, % 如果需要引用列表项，这将决定引用格式（这里仍然使用数字）
+%            itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em
+%        }  
+
+% 其它设置
+    % 脚注设置
+        \renewcommand\thefootnote{\ding{\numexpr171+\value{footnote}}}
+    % 参考文献引用设置
+        \bibliographystyle{unsrt}   % 设置参考文献引用格式为unsrt
+        \newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}     % 自定义上角标式引用
+    % 文章序言设置
+        \newcommand{\cnabstractname}{序言}
+        \newenvironment{cnabstract}{%
+            \par\Large
+            \noindent\mbox{}\hfill{\bfseries \cnabstractname}\hfill\mbox{}\par
+            \vskip 2.5ex
+            }{\par\vskip 2.5ex}
+
+% 文章默认字体设置
+    \usepackage{fontspec}   % 宏包：字体设置
+        \setCJKmainfont{SimSun}    % 设置中文字体为宋体字体
+        \setCJKmainfont[AutoFakeBold=3]{SimSun} % 设置加粗字体为 SimSun 族，AutoFakeBold 可以调整字体粗细
+        \setmainfont{Times New Roman} % 设置英文字体为Times New Roman
+
+% 各级标题自定义设置
+    \usepackage{titlesec}   
+        \titleformat{\chapter}[hang]{\normalfont\Large\bfseries\centering}{}{20pt}{}
+        \titlespacing*{\chapter}{0pt}{-20pt}{20pt} % 控制上方空白的大小
+        % section标题自定义设置 
+        \titleformat{\section}[hang]{\normalfont\Large\bfseries}{§\,\thesection\,}{8pt}{}
+        % subsubsection标题自定义设置
+        %\titleformat{\subsubsection}[hang]{\normalfont\bfseries}{}{8pt}{}
+
+% >> ------------------ 文章宏包及相关设置 ------------------ << %
+% ------------------------------------------------------------- %
+
+% ----------------------------------------------------------- %
+% >> --------------------- 文章信息区 --------------------- << %
+% 页眉页脚设置
+    \usepackage{fancyhdr}   %宏包：页眉页脚设置
+        \pagestyle{fancy}
+        \fancyhf{}
+        \cfoot{\thepage}
+        \renewcommand\headrulewidth{1pt}
+        \renewcommand\footrulewidth{0pt}
+        \lhead{Carter Yin} 
+        \chead{R Review}    
+        \rhead{yinchao050313@gmail.com}
+%文档信息设置
+    \title{R Review}
+    \author{尹超\\ \footnotesize 中国科学院大学，北京 100049\\ Carter Yin \\ \footnotesize University of Chinese Academy of Sciences, Beijing 100049, China}
+    \date{\footnotesize 2024.8 -- 2025.1}
+% >> --------------------- 文章信息区 --------------------- << %
+% ----------------------------------------------------------- %
+
+% 开始编辑文章
+
+\begin{document} 
+\zihao{5}             % 设置全文字号大小, -4 为小四, 5 为五号
+
+% --------------------------------------------------------------- %
+% >> --------------------- 封面序言与目录 --------------------- << %
+% 封面
+    \maketitle\newpage   % 生成封面并换页
+    \pagenumbering{Roman} % 页码为大写罗马数字
+    \thispagestyle{fancy}   % 显示页码、页眉等
+
+% 序言
+    \begin{cnabstract}\normalsize 
+        R  Review
+    \end{cnabstract}    
+\addcontentsline{toc}{chapter}{序言} % 手动添加为目录
+
+% 目录
+    \setcounter{tocdepth}{4}                % 目录深度（为1时显示到section）
+    \tableofcontents                        % 目录页
+    \addcontentsline{toc}{chapter}{目录}    % 手动添加此页为目录
+    \thispagestyle{fancy}                   % 显示页码、页眉等 
+
+% 收尾工作
+    \newpage    
+    \pagenumbering{arabic} 
+
+
+    
+% >> --------------------- 封面序言与目录 --------------------- << %
+% --------------------------------------------------------------- %
+
+\chapter{问题 1：使用最大似然估计 (MLE) 进行自助法（Bootstrapping）}
+
+\begin{lstlisting}[language=R]
+    # 定义样本大小（观察值的数量）
+    mysamplesize = 115
+    
+    # 构造置信区间时的显著性水平（alpha）
+    alpha = 0.05
+    
+    # 定义真实参数值（指数分布的偏移量）
+    mytheta = 1
+    
+    # 从指数分布生成一个大小为 `mysamplesize` 的随机样本，并加上偏移量 `mytheta`
+    mysample = rexp(mysamplesize, rate = 1) + mytheta
+    
+    # 计算最大似然估计（MLE），这里采用排序后样本中的最小值（指数分布的MLE就是样本中的最小值）
+    mymle = sort(mysample)[1]
+    
+    # 自助法样本的数量
+    bootstrapsize = 1000
+    
+    # 初始化一个向量来存储每次自助法估计的结果
+    bootstrapestimates = rep(0, bootstrapsize)
+    
+    # 执行自助法：生成自助样本并计算它们的估计值
+    for (ii in 1:bootstrapsize) {
+        # 使用MLE作为偏移量生成一个新的自助样本
+        bootstrapsample = rexp(mysamplesize, rate = 1) + mymle
+        
+        # 每个自助样本的估计值是排序后的最小值（类似MLE）
+        bootstrapestimates[ii] = sort(bootstrapsample)[1]
+    }
+    
+    # 排序自助法的估计值，为计算分位数做准备
+    bootstrapquantiles = sort(bootstrapestimates - mymle)
+    
+    # 计算置信区间的下分位数（alpha/2）
+    lowerquantile = bootstrapquantiles[round(bootstrapsize*alpha*0.5)]
+    
+    # 计算置信区间的上分位数（1-alpha/2）
+    upperquantile = bootstrapquantiles[round(bootstrapsize*(1-alpha*0.5))]
+    
+    # 计算置信区间的下界，通过从MLE中减去上分位数
+    lowerbound = mymle - upperquantile
+    
+    # 计算置信区间的上界，通过从MLE中减去下分位数
+    upperbound = mymle - lowerquantile
+    
+    # 输出置信区间的下界
+    lowerbound
+    
+    # 输出置信区间的上界
+    upperbound
+
+> lowerbound
+[1] 0.9730528
+> upperbound
+[1] 1.003367
+    
+\end{lstlisting}
+
+
+
+
+\chapter{问题 2：使用矩估计进行自助法（Bootstrapping）}
+
+
+\begin{lstlisting}[language=R]
+    # 样本大小与问题1相同
+mysamplesize = 115
+
+# 构造置信区间时的显著性水平（alpha）
+alpha = 0.05
+
+# 定义真实参数值（指数分布的偏移量）
+mytheta = 1
+
+# 从指数分布生成一个样本，并加上偏移量 `mytheta`
+mysample = rexp(mysamplesize, rate = 1) + mytheta
+
+# 计算矩估计，这里是样本均值减去1（对于指数分布，矩估计是样本均值减去1）
+mymomentestimation = mean(mysample) - 1
+
+# 自助法样本的数量
+bootstrapsize = 1000
+
+# 初始化一个向量来存储每次自助法估计的结果
+bootstrapestimates = rep(0, bootstrapsize)
+
+# 执行自助法：生成自助样本并计算它们的估计值
+for (ii in 1:bootstrapsize) {
+    # 使用矩估计作为偏移量生成一个新的自助样本
+    bootstrapsample = rexp(mysamplesize, rate = 1) + mymomentestimation
+    
+    # 每个自助样本的矩估计值是样本均值减去1
+    bootstrapestimates[ii] = mean(bootstrapsample) - 1
+}
+
+# 排序自助法的估计值，为计算分位数做准备
+bootstrapquantiles = sort(bootstrapestimates - mymomentestimation)
+
+# 计算置信区间的下分位数（alpha/2）
+lowerquantile = bootstrapquantiles[round(bootstrapsize*alpha*0.5)]
+
+# 计算置信区间的上分位数（1-alpha/2）
+upperquantile = bootstrapquantiles[round(bootstrapsize*(1-alpha*0.5))]
+
+# 计算置信区间的下界，通过从矩估计中减去上分位数
+lowerbound = mymomentestimation - upperquantile
+
+# 计算置信区间的上界，通过从矩估计中减去下分位数
+upperbound = mymomentestimation - lowerquantile
+
+# 输出置信区间的下界
+lowerbound
+
+# 输出置信区间的上界
+upperbound
+
+
+> lowerbound
+[1] 0.8166889
+> upperbound
+[1] 1.165083
+
+
+\end{lstlisting}
+
+
+\section*{解释}
+
+\subsection*{随机样本生成}
+
+\texttt{rexp(mysamplesize, rate = 1)} 用于从指数分布中生成随机数，\texttt{rate = 1} 指的是指数分布的速率参数为 1。在两种情况中，都将 \texttt{mytheta}（MLE 中的真实值）或 \texttt{mymomentestimation}（矩估计中的真实值）加到样本中。
+
+\subsection*{最大似然估计 (MLE)}
+
+对于指数分布，MLE 是排序后样本中的最小值（\texttt{sort(mysample)[1]}），因为指数分布的 MLE 就是样本中的最小值。
+
+\subsection*{矩估计}
+
+矩估计是计算样本均值减去 1（\texttt{mean(mysample) - 1}），这是根据矩估计法得到的结果，用于指数分布。
+
+\subsection*{自助法（Bootstrapping）}
+
+自助法通过对样本进行有放回抽样，再次计算估计值（MLE 或矩估计），并计算这些估计值的分布。置信区间是基于自助法估计值的分位数计算的（\texttt{lowerquantile} 和 \texttt{upperquantile}）。
+
+\subsection*{置信区间计算}
+
+最终步骤是通过自助法估计值的分位数计算置信区间的上下界。计算方式是将分位数从原始估计值（MLE 或矩估计）中减去。
+
+这个代码实现了通过自助法估计最大似然估计（MLE）和矩估计的置信区间。两者的逻辑类似，但初始估计的计算方法不同。
+
+
+
+
+
+
+
+\chapter{问题3：单样本Z检验（已知方差）}
+
+
+\begin{lstlisting}[language=R]
+ # one-sample z-test (variance known) ---------------------------------------------
+
+    nail = c(2.942371, 2.988662, 3.106234, 3.109316, 3.118427, 3.132254, 
+         3.140042, 3.170188, 2.902562, 3.128003, 3.146441, 2.978240, 
+         3.103600, 3.003394, 3.044384, 2.849916)  # 样本数据
+sigma = 0.1  # 方差已知，sigma为已知的标准差
+mu = 3  # 零假设下的均值
+n = length(nail)  # 样本数量
+# 检验统计量，零假设下服从标准正态分布
+Z_statistic = sqrt(n) * (mean(nail) - mu) / sigma  # 计算Z统计量
+# help(pnorm)  # 查询pnorm函数的帮助文档
+p_value = 2 * pnorm(Z_statistic, lower.tail = F)  # 计算双尾p值
+p_value  # 输出p值
+# 0.03076609  # 计算得到的p值
+
+# 方法2：使用BSDA包进行Z检验
+# install.packages("BSDA")  # 安装BSDA包
+library(BSDA)  # 加载BSDA包
+# help(z.test)  # 查询z.test函数的帮助文档
+result = z.test(nail, mu = mu, alternative = c("two.sided"), sigma.x = sigma)  # 使用z.test进行Z检验
+p_value = result$p.value  # 提取p值
+p_value  # 输出p值
+# 0.03076609  # 计算得到的p值
+
+### 单样本t检验（未知方差）
+
+# help(t.test)  # 查询t.test函数的帮助文档
+result = t.test(nail, mu = mu, alternative = c("two.sided"))  # 进行单样本t检验
+p_value = result$p.value  # 提取p值
+p_value  # 输出p值
+# 0.04297243  # 计算得到的p值
+
+### 双样本t检验
+
+# H0：磷肥没有效果 mu1=mu2
+# H1：磷肥有正面效果（提高产量） mu1-mu2>0
+# 设置两组数据
+x = c(62, 57, 65, 60, 63, 58, 57, 60, 60, 58)  # 第一组数据
+y = c(50, 59, 56, 57, 58, 57, 56, 55, 57)  # 第二组数据
+# 假设两个总体方差相等，进行双样本t检验
+result = t.test(x, y, alternative = c("greater"), var.equal = T)  # 方差相等假设
+p_value = result$p.value  # 提取p值
+p_value  # 输出p值
+# 0.002471312  # 计算得到的p值
+
+# 假设两个总体方差不相等，进行双样本t检验
+result = t.test(x, y, alternative = c("greater"), var.equal = F)  # 方差不等假设
+p_value = result$p.value  # 提取p值
+p_value  # 输出p值
+# 0.002450701  # 计算得到的p值
+
+### 检验
+
+# 不使用函数计算p值
+
+# help(pt)  # 查询pt函数的帮助文档
+
+# 单样本Z检验（已知方差）
+Z_statistic <- 4 * (mean(nail) - 3) / 0.1  # 计算Z统计量
+p_value <- 2 * pnorm(Z_statistic, lower.tail = F)  # 计算双尾p值
+p_value  # 输出p值
+
+# 单样本t检验（未知方差）
+S <- sqrt(sum((nail - mean(nail))^2) / 15)  # 计算样本的标准差
+T_statistic <- 4 * (mean(nail) - 3) / S  # 计算t统计量
+p_value <- 2 * pt(T_statistic, df = 15, lower.tail = F)  # 计算双尾p值
+p_value  # 输出p值
+
+# 双样本t检验（方差相等）
+S1 <- sqrt(sum((x - mean(x))^2) / 9)  # 计算第一组样本的标准差
+S2 <- sqrt(sum((y - mean(y))^2) / 8)  # 计算第二组样本的标准差
+T_statistic <- (mean(x) - mean(y)) / sqrt(1/9 + 1/10) / sqrt((9 * S1^2 + 8 * S2^2) / 17)  # 计算t统计量
+p_value <- pt(T_statistic, df = 17, lower.tail = F)  # 计算p值
+p_value  # 输出p值
+
+# 双样本t检验（方差不等）
+SEw <- sqrt(1/10 * S1^2 + 1/9 * S2^2)  # 计算标准误差
+df <- SEw^4 / (S1^4/10/10/9 + S2^4/9/9/8)  # 计算自由度
+T_statistic <- (mean(x) - mean(y)) / SEw  # 计算t统计量
+p_value <- pt(T_statistic, df = df, lower.tail = F)  # 计算p值
+p_value  # 输出p值
+
+
+\end{lstlisting}
+
+
+
+\section*{解释}
+
+\subsection*{单样本 Z 检验（已知方差）}
+
+使用已知的总体标准差进行 Z 检验，通过计算 Z 统计量（\texttt{Z\_statistic}）并从标准正态分布中查找 p 值。
+
+\subsection*{方法 2：BSDA 包的 Z 检验}
+
+使用 \texttt{BSDA} 包中的 \texttt{z.test} 函数来进行 Z 检验，并提取 p 值。
+
+\subsection*{单样本 t 检验（未知方差）}
+
+在样本方差未知的情况下，使用 t 检验并从结果中提取 p 值。
+
+\subsection*{双样本 t 检验}
+
+通过假设方差相等或不等，进行双样本 t 检验，检验两个组的均值差异。
+
+\subsection*{检验部分}
+
+不使用内建函数手动计算 Z 统计量、t 统计量和 p 值，分别进行了单样本和双样本检验的计算过程。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{问题4：Wilcoxon秩和检验、t检验和Hardy-Weinberg平衡检验}
+
+\begin{lstlisting}[language=R]
+    Wilcoxon 检验
+    # help(wilcox.test)  # 查询 wilcox.test 函数的帮助文档
+    Aarea = c(62, 57.04, 65, 60, 63, 58.1, 57.001, 60.1, 60.2, 58)  # 样本A数据
+    Barea = c(50, 59, 56.01, 57.01, 58.05, 57.02, 56, 55, 57.03)  # 样本B数据
+    result = wilcox.test(Aarea, Barea, exact = TRUE, alternative = c("two.sided"))  # 进行Wilcoxon秩和检验（双尾检验）
+    p_value = result$p.value  # 提取p值
+    p_value  # 输出p值
+    # p_value = 0.002987724  # 计算得到的p值
+
+    t 检验
+    result = t.test(Aarea, Barea, alternative = c("greater"))  # 进行t检验（单尾检验，假设样本A的均值大于样本B的均值）
+    p_value = result$p.value  # 提取p值
+    p_value  # 输出p值
+    # p_value = 0.002307728  # 计算得到的p值
+
+    Hardy-Weinberg 平衡检验
+    # MLE of theta
+    theta <- 874/(1184+874)  # 计算最大似然估计（MLE）的theta值，这里假设是基因型频率
+    # MLE of p_M
+    p1 <- (1-theta)^2  # MLE of p_M，计算纯合隐性基因型（MM）的频率
+    # MLE of p_MN
+    p2 <- 2*theta*(1-theta)  # MLE of p_MN，计算杂合基因型（MN）的频率
+    # MLE of p_N
+    p3 <- theta^2  # MLE of p_N，计算纯合显性基因型（NN）的频率
+    # expression of test statistic
+    Z <- (342-1029*p1)^2/(1029*p1) + (500-1029*p2)^2/(1029*p2) + (187-1029*p3)^2/(1029*p3)  # 计算卡方检验统计量
+    p_value <- pchisq(Z, df = 1, lower.tail = FALSE)  # 计算卡方分布的p值，df=1是自由度
+    p_value  # 输出p值
+    # p_value = 0.8569258  # 计算得到的p值
+
+
+  
+\end{lstlisting}
+
+
+
+
+
+\section*{解释}
+
+\subsection*{Wilcoxon 检验}
+
+\texttt{wilcox.test()} 用于执行非参数检验，比较两组数据的分布是否相同。此处为双尾检验。通过 \texttt{result\$p.value} 提取 p 值，结果表明 p 值为 0.002987724，表明两组数据差异显著。
+
+\subsection*{t 检验}
+
+\texttt{t.test()} 用于执行传统的 t 检验，这里使用单尾检验，假设组 A 的均值大于组 B。通过 \texttt{result\$p.value} 提取并输出 t 检验的 p 值，结果为 0.002307728，表明组 A 的均值显著大于组 B。
+
+\subsection*{Hardy-Weinberg 平衡检验}
+
+使用最大似然估计（MLE）方法计算等位基因频率，并基于这些频率计算卡方检验的统计量。通过 \texttt{pchisq()} 计算卡方分布的 p 值，结果为 0.8569258，表示未拒绝零假设，基因频率符合 Hardy-Weinberg 平衡。
+
+
+
+
+
+
+
+
+
+
+\chapter{问题5}
+
+\begin{lstlisting}[language=R]
+    Jane Austen 数据分析
+    table1 <- matrix(c(14, 133, 12, 241, 11, 259, 16, 180, 14, 285, 6, 265, 8, 93, 
+                   12, 139, 8, 221, 2, 81, 1, 153, 17, 204), 
+                 nrow = 6)  # 创建一个6行4列的矩阵table1，包含Jane Austen数据
+   result <- chisq.test(table1[, 1:3])  # 对table1的前三列进行卡方检验
+   p_value <- result$p.value  # 提取p值
+   p_value  # 输出p值
+   # p_value = 0.009734904  # 计算得到的p值
+
+   # 前三列求行和作为一列
+   table2 <- matrix(c(38, 406, 38, 665, 25, 745, 2, 81, 1, 153, 17, 204), nrow = 6)  # 创建一个新的6行4列矩阵table2
+   result <- chisq.test(table2)  # 对table2进行卡方检验
+   p_value <- result$p.value  # 提取p值
+   p_value  # 输出p值
+   # p_value = 1.669517e-05  # 计算得到的p值
+
+   探索性数据分析（EDA）
+   library(MASS)  # 加载MASS包，提供统计工具和数据集
+   library(lattice)  # 加载lattice包，提供绘图功能
+
+   # base:plot, ggplot2, lattice  # 介绍常用的绘图工具包
+
+   # R内置数据集hills，包含1984年35场苏格兰山地赛跑的记录时间数据
+   hills  # 查看hills数据
+   ?hills  # 查看hills数据集的帮助文档，了解数据集的背景和描述
+
+   splom(~ hills)  # 散点图矩阵，展示数据中各个变量的关系
+
+   attach(hills)  # 使用attach函数，使数据集hills中的变量可以直接使用
+
+   plot(hills$dist, hills$time)  # 绘制散点图，展示distance（距离）与time（时间）的关系
+
+   # interactive()测试当前是否是R的交互模式
+   # 如果是，则运行identify函数打开一个交互窗口
+   # 该交互窗口可以在图上的点上直接点击，显示标签
+   # 在原版R中可以正常操作，但是Rstudio里出现了偏差，原因不明
+   # if(interactive()) identify(dist, time, row.names(hills))  # 在交互模式下显示数据点的标签
+
+   # detach(hills)  # 取消attach，避免之后引用变量时出现混淆
+
+   4.5 Trellis 图形
+   xyplot(time ~ dist, data = hills,  # 创建一个Trellis散点图，展示时间与距离的关系
+       panel = function(x, y, ...) {  # 定义绘图面板函数
+           panel.xyplot(x, y, ...)  # 绘制散点图
+           panel.lmline(x, y, type = "l")  # 添加最小二乘回归线
+           panel.abline(lqs(y ~ x), lty = 3)  # 添加resistant regression线（稳健回归线），lty控制线条类型
+       }
+)
+
+median(hills$time)  # 计算时间数据的中位数
+mad(hills$time)  # 计算时间数据的绝对中位差
+histogram(~time, data = hills)  # 绘制时间数据的直方图
+densityplot(~time, data = hills)  # 绘制时间数据的密度图
+stem(hills$time)  # 绘制时间数据的茎叶图
+qqnorm(hills$time)  # 绘制时间数据的QQ图，用于检验数据是否符合正态分布
+
+
+Michelson 实验数据
+michelson  # 查看michelson数据集，包含光速实验数据
+?michelson  # 查看michelson数据集的帮助文档
+
+bwplot(Expt ~ Speed, data = michelson, main = "Speed of Light Data", ylab = "Experiment No.")  # 绘制箱线图，展示不同实验光速的分布
+# title("Speed of Light Data")  # 添加标题，但与lattice包的绘图函数一起使用时可能会出现问题
+
+
+
+\end{lstlisting}
+
+    
+\section*{解释}
+
+\subsection*{Jane Austen 数据分析}
+
+使用 \texttt{chisq.test()} 进行卡方检验，比较不同类别的数据频率。创建了两个数据表 \texttt{table1} 和 \texttt{table2}，并对其进行卡方检验，提取并输出 p 值，判断数据是否存在显著差异。
+
+\subsection*{探索性数据分析（EDA）}
+
+使用 \texttt{MASS} 和 \texttt{lattice} 包进行数据分析和可视化。展示了如何使用散点图、散点图矩阵、Trellis 图等可视化方法探索数据，帮助理解数据分布和关系。计算了数据的中位数、绝对中位差，并绘制了直方图、密度图、茎叶图和 QQ 图。
+
+\subsection*{Michelson 实验数据}
+
+使用 \texttt{michelson} 数据集，绘制光速实验的箱线图，展示不同实验中光速测量的分布。
+
+
+
+\chapter{12.02 数据处理与可视化}
+
+\begin{lstlisting}[language=R]
+    # 请注意R的工作目录和Pearson.csv文件所在的目录
+
+# 获取当前工作目录
+getwd()  
+# 设置工作目录，确保R能找到文件
+setwd("C:/Users/WangKe/Desktop/TA/2024TA/exercise class")  
+# 读取CSV文件“Pearson.csv”，并将数据存储在height中
+height = read.csv("Pearson.csv")  
+# 如果文件是txt格式的，可以用read.table方法读取
+# height = read.table("Pearson.txt", header = TRUE)
+
+# 另一种方法：使用绝对路径直接读取CSV文件
+height = read.csv("C:/Users/WangKe/Desktop/TA/2024TA/exercise class/Pearson.csv")  
+# 另一种方法，读取txt文件
+# height = read.table("C:/Users/WangKe/Desktop/TA/2024TA/exercise class/Pearson.txt", header = TRUE)
+
+# 绘制散点图，bty控制图的边框类型，pch控制点的形状
+plot(Son ~ Father, data = height, bty = "l", pch = 20)  
+# 添加直线，a为截距，b为斜率，lty控制线条类型，lwd控制线条宽度
+abline(a = 0, b = 1, lty = 1, lwd = 2)  
+# 画出线性回归模型的回归线，Son为y，Father为x
+abline(lm(Son ~ Father, data = height), lty = 1, lwd = 2)  
+
+# 计算Father列的标准差
+Father.sd = sd(height$Father)  
+# 计算Son列的标准差
+Son.sd = sd(height$Son)  
+# 计算Father列的均值
+Father.ave = mean(height$Father)  
+# 计算Son列的均值
+Son.ave = mean(height$Son)  
+
+# 计算Pearson相关系数，衡量Father和Son之间的线性关系
+Pearson.cor = cor(height$Father, height$Son)  
+
+# 绘制Father数据的直方图，检查其分布情况
+hist(height$Father)  
+# 绘制Son数据的直方图，检查其分布情况
+hist(height$Son)  
+
+# 绘制Father数据的核密度图，进一步查看分布
+plot(density(height$Father))  
+# 绘制Son数据的核密度图，进一步查看分布
+plot(density(height$Son))  
+
+# 绘制QQ图，检查Father数据是否服从正态分布
+qqnorm(height$Father)  
+qqline(height$Father)  # 绘制QQ图的参考线
+# 绘制QQ图，检查Son数据是否服从正态分布
+qqnorm(height$Son)  
+qqline(height$Son)  # 绘制QQ图的参考线
+
+\end{lstlisting}
+
+\section*{12.02}
+
+\subsection*{读取数据}
+
+通过 \texttt{read.csv()} 或 \texttt{read.table()} 函数读取 CSV 或 TXT 文件，并设置工作目录。
+
+\subsection*{可视化}
+
+使用 \texttt{plot()} 绘制散点图，\texttt{abline()} 添加回归线，\texttt{lm()} 进行线性回归。计算数据的标准差、均值和 Pearson 相关系数。
+
+\subsection*{分布检验}
+
+通过直方图、核密度图和 QQ 图检查数据的分布情况，检查是否符合正态分布。
+
+
+
+
+\chapter{12.04 数据处理与回归分析}
+
+\begin{lstlisting}[language=R]
+    # 设置工作目录，确保R能找到文件
+    setwd("C:/Users/WangKe/Desktop/TA/2024TA/exercise class")  
+    # 读取CSV文件“Pearson.csv”，并将数据存储在height中
+    height = read.csv("Pearson.csv")  
+    # 绘制Son和Father的散点图
+    plot(Son ~ Father, data = height, bty = "l", pch = 20)  
+    
+    # 计算Son和Father的均值
+    Son.ave = mean(height$Son)  
+    Father.ave = mean(height$Father)  
+    # 绘制Son和Father的回归线，截距为Son的均值减去Father的均值，斜率为1
+    abline(a = Son.ave - Father.ave, b = 1, lty = 1, lwd = 2)  
+    # 绘制Son和Father的回归线，使用线性回归模型
+    abline(lm(Son ~ Father, data = height), lty = 1, lwd = 2)  
+    
+    # 查看线性回归的结果，显示回归系数等信息
+    summary(lm(Son ~ Father, data = height))  
+    
+    # 读取另一份数据文件“reading.csv”，并指定列名
+    reading <- read.csv("reading.csv", col.names = c("S1982", "S1983"))  
+    # 绘制S1982和S1983的散点图
+    plot(S1983 ~ S1982, data = reading, bty = "l", pch = 20)  
+    
+    # 计算S1983和S1982的均值
+    S1983.ave = mean(reading$S1983)  
+    S1982.ave = mean(reading$S1982)  
+    # 绘制S1983和S1982的回归线，截距为S1983的均值减去S1982的均值，斜率为1
+    abline(a = S1983.ave - S1982.ave, b = 1, lty = 1, lwd = 2)  
+    # 绘制S1983和S1982的回归线，使用线性回归模型
+    abline(lm(S1983 ~ S1982, data = reading), lty = 1, lwd = 2)  
+    
+    # 创建线性回归模型，预测S1983基于S1982
+    model <- lm(S1983 ~ S1982, data = reading)  
+    # 输出回归模型的摘要
+    model  
+    # 显示线性回归模型的详细统计信息
+    summary(model)  
+    
+    # 设置显著性水平alpha为0.05
+    alpha <- 0.05  
+    # 计算回归系数的置信区间，置信度为1-alpha
+    confint(model, level = 1 - alpha)  
+    
+    \end{lstlisting}
+
+
+    \section*{12.04}
+
+    \subsection*{回归分析}
+    
+    在两组数据上绘制回归线，使用 \texttt{lm()} 进行线性回归，计算回归系数，并生成回归模型的摘要。
+    
+    \subsection*{置信区间}
+    
+    通过 \texttt{confint()} 计算回归系数的置信区间，设定显著性水平为 0.05。
+
+
+
+\chapter{12.09}
+
+\begin{lstlisting}[language=R]
+    # 安装并加载 deming 包（如果尚未安装，可以取消注释进行安装）
+# install.packages('deming')  
+library(deming)  # 加载deming包，用于Deming回归
+
+# 绘制散点图，bty控制图的边框类型，pch控制点的形状
+plot(aes ~ aas, data = arsenate, bty = "l", pch = 20)  
+
+# 添加线性回归直线，使用 lm() 计算线性回归，并用 abline() 绘制回归线
+abline(lm(aes ~ aas, data = arsenate), lty = 1, lwd = 2, col = 2)  
+
+# 添加Deming回归直线，使用 deming() 函数计算Deming回归，并用 abline() 绘制回归线
+abline(deming(aes ~ aas, data = arsenate, xstd = se.aas, ystd = se.aes), lty = 1, lwd = 2, col = 4)  
+
+# 使用 lm() 建立线性回归模型，并存储为 fit1
+fit1 = lm(aes ~ aas, data = arsenate)  
+
+# 使用 deming() 建立Deming回归模型，并存储为 fit2
+fit2 = deming(aes ~ aas, data = arsenate, xstd = se.aas, ystd = se.aes)  
+
+# 打印线性回归的结果
+print(fit1)  
+
+# 打印Deming回归的结果
+print(fit2)  
+
+# 计算线性回归模型的斜率
+slope_lm = coefficients(fit1)[2]  
+
+# 计算Deming回归模型的斜率
+slope_deming = coefficients(fit2)[2]  
+
+# 计算两者斜率的差值
+slope_lm - slope_deming    # -0.1283495  
+
+\end{lstlisting}
+
+\section*{解释}
+
+\subsection*{安装和加载 deming 包}
+
+\texttt{deming} 包提供了 Deming 回归分析工具，该方法是处理误差变量的回归分析。
+
+\texttt{library(deming)}：加载该包，使得后续代码可以使用其中的函数。
+
+\subsection*{绘制散点图}
+
+\texttt{plot(aes ~ aas, data = arsenate, bty = "l", pch = 20)}：这行代码用于绘制 \texttt{aes} 和 \texttt{aas} 之间的散点图。\texttt{bty = "l"} 控制图形的边框样式，\texttt{pch = 20} 设置点的形状为实心圆。
+
+\subsection*{添加回归线}
+
+\texttt{abline(lm(aes ~ aas, data = arsenate), lty = 1, lwd = 2, col = 2)}：这行代码使用普通最小二乘法（OLS）拟合线性回归，并将回归直线添加到散点图中。\texttt{lty = 1} 为线型，\texttt{lwd = 2} 设置线条宽度，\texttt{col = 2} 设置颜色为红色。
+
+\texttt{abline(deming(aes ~ aas, data = arsenate, xstd = se.aas, ystd = se.aes), lty = 1, lwd = 2, col = 4)}：这行代码使用 Deming 回归拟合，并将回归直线添加到散点图中，颜色设置为蓝色。
+
+\subsection*{建立回归模型}
+
+\texttt{fit1 = lm(aes ~ aas, data = arsenate)}：使用线性回归（OLS）建立 \texttt{aes} 对 \texttt{aas} 的回归模型。
+
+\texttt{fit2 = deming(aes ~ aas, data = arsenate, xstd = se.aas, ystd = se.aes)}：使用 Deming 回归建立相同的回归模型。
+
+\subsection*{打印回归结果}
+
+\texttt{print(fit1)}：打印线性回归模型的结果。
+
+\texttt{print(fit2)}：打印 Deming 回归模型的结果。
+
+\subsection*{计算斜率差异}
+
+\texttt{slope\_lm = coefficients(fit1)[2]}：提取线性回归模型的斜率。
+
+\texttt{slope\_deming = coefficients(fit2)[2]}：提取 Deming 回归模型的斜率。
+
+\texttt{slope\_lm - slope\_deming}：计算两个模型斜率的差异，结果为 -0.1283495，表明两种方法的回归斜率存在一定差异。
+
+通过这段代码，你可以比较普通最小二乘法（OLS）回归和 Deming 回归在处理具有误差的自变量时的不同结果。
+
+
+
+\chapter{12.25}
+
+\begin{lstlisting}[language=R]
+    # 1. 加载数据
+brainsize = read.csv("C:/Users/78003/Desktop/brainsize.csv")  # 读取存储在桌面上的 CSV 文件，包含脑大小（BRAIN）、体重（BODY）、妊娠期（GESTATION）、胎数（LITTER）等数据
+
+# 2. 先运行散点图矩阵（可选）
+pairs(brainsize[, 2:5])  # 绘制数据集中第2至第5列（BODY、GESTATION、LITTER、BRAIN）之间的散点图矩阵，帮助检查变量之间的关系
+
+# 3. 创建线性回归模型
+linearmodel = lm(BRAIN ~ BODY + GESTATION + LITTER, data = brainsize)  # 创建一个线性回归模型，预测BRAIN（脑大小）基于BODY（体重）、GESTATION（妊娠期）和LITTER（胎数）
+
+# 4. 查看回归模型摘要
+summary(linearmodel)  # 输出线性回归模型的摘要，包括回归系数、标准误差、t值、p值等信息
+
+# 5. 绘制BRAIN的密度图
+plot(density(brainsize$BRAIN))  # 绘制脑大小（BRAIN）的密度图，帮助观察数据分布的形态
+
+# 6. 绘制log(BRAIN)的密度图
+plot(density(log(brainsize$BRAIN)))  # 绘制对数变换后的脑大小（log(BRAIN)）的密度图，检查数据是否服从对数正态分布
+
+# 7. Q-Q图，检查log(BRAIN)的正态性
+qqnorm(log(brainsize$BRAIN))  # 绘制log(BRAIN)的Q-Q图，检查数据是否接近正态分布
+qqline(log(brainsize$BRAIN))  # 添加Q-Q图的参考线，帮助判断数据的正态性
+
+# 8. 对数变换后的散点图矩阵
+pairs(cbind(log(brainsize[,2]), log(brainsize[,3]), log(brainsize[,4]), log(brainsize[,5])))  # 绘制对数变换后的散点图矩阵，检查log变换后的各个变量之间的关系
+
+# 9. 使用对数变换创建新的线性回归模型
+linearmodel = lm(log(BRAIN) ~ log(BODY) + log(GESTATION) + log(LITTER), data = brainsize)  # 创建新的线性回归模型，预测对数变换后的BRAIN基于对数变换后的BODY、GESTATION和LITTER
+
+summary(linearmodel)  # 输出新的线性回归模型的摘要，检查回归系数和其他统计信息
+
+# 10. 查看模型残差的Q-Q图
+qqnorm(linearmodel$residuals)  # 绘制回归模型残差的Q-Q图，检查残差是否接近正态分布
+qqline(linearmodel$residuals)  # 添加Q-Q图的参考线，帮助判断残差的正态性
+
+\end{lstlisting}
+
+
+\section*{解释}
+
+\subsection*{加载数据}
+
+\texttt{read.csv()} 用于读取 CSV 格式的文件，将数据加载到 R 中的 \texttt{brainsize} 数据框中。
+
+\subsection*{散点图矩阵}
+
+\texttt{pairs()} 用于生成一组变量之间的散点图矩阵。通过查看散点图矩阵，你可以初步了解变量之间的关系。
+
+\subsection*{线性回归模型}
+
+\texttt{lm()} 用于建立线性回归模型，指定自变量（\texttt{BODY}、\texttt{GESTATION}、\texttt{LITTER}）和因变量（\texttt{BRAIN}）。该模型假设脑大小是体重、妊娠期和胎数的线性函数。
+
+\subsection*{回归模型摘要}
+
+\texttt{summary()} 提供模型的详细信息，包括回归系数、标准误差、t 值、p 值等统计量。通过这些信息，你可以了解模型的拟合情况。
+
+\subsection*{密度图}
+
+\texttt{density()} 用于估计并绘制数据的密度图，帮助理解数据的分布情况。这里分别绘制了脑大小和其对数值的密度图。
+
+\subsection*{Q-Q 图}
+
+\texttt{qqnorm()} 用于绘制 Q-Q 图，以检查数据是否符合正态分布。\texttt{qqline()} 添加参考线，用于判断数据是否偏离正态分布。
+
+\subsection*{对数变换后的散点图矩阵}
+
+\texttt{cbind()} 函数将数据的对数变换合并在一起，\texttt{pairs()} 绘制对数变换后的散点图矩阵。对数变换有助于稳定数据的方差，并可能使数据分布更接近正态分布。
+
+\subsection*{新的线性回归模型}
+
+使用对数变换后的数据建立新的回归模型，帮助缓解原数据可能存在的非正态性或异方差问题。
+
+\subsection*{残差 Q-Q 图}
+
+通过分析模型残差的 Q-Q 图，检查残差是否服从正态分布，进而判断回归模型的适用性。
+
+通过这些步骤，你可以全面地检查数据的分布、回归模型的拟合情况以及变换后数据的正态性。这些是进行线性回归分析和验证的重要步骤。
+
+
+
+\chapter{终点}
+
+\section*{知识点梳理与解释}
+
+\subsection*{文档设置与宏包导入}
+
+\begin{itemize}
+    \item \texttt{documentclass[UTF8]\{report\}}：设定文档类型为报告，编码格式为 UTF-8。
+    \item \texttt{usepackage\{...\}}：导入各种宏包，如 \texttt{ctex}（中文支持）、\texttt{amsmath}（数学公式）、\texttt{graphicx}（插图）、\texttt{listings}（代码高亮）等。
+    \item \texttt{geometry\{...\}}：设置页面边距。
+    \item \texttt{fancyhdr}：设置页眉页脚。
+    \item \texttt{titlesec}：自定义标题格式。
+\end{itemize}
+
+\subsection*{数据读取与处理}
+
+\begin{itemize}
+    \item \texttt{read.csv()} 和 \texttt{read.table()}：读取 CSV 或 TXT 文件，将数据加载到 R 中的数据框中。例如：
+    \begin{lstlisting}[language=R]
+    brainsize = read.csv("C:/Users/78003/Desktop/brainsize.csv")
+    \end{lstlisting}
+    \item \texttt{setwd()}：设置工作目录，确保 R 能找到需要读取的文件。例如：
+    \begin{lstlisting}[language=R]
+    setwd("C:/Users/WangKe/Desktop/TA/2024TA/exercise class")
+    \end{lstlisting}
+    \item \texttt{getwd()}：获取当前工作目录。例如：
+    \begin{lstlisting}[language=R]
+    getwd()
+    \end{lstlisting}
+\end{itemize}
+
+\subsection*{数据可视化}
+
+\begin{itemize}
+    \item \texttt{plot()}：绘制散点图，展示两个变量之间的关系。例如：
+    \begin{lstlisting}[language=R]
+    plot(Son ~ Father, data = height, bty = "l", pch = 20)
+    \end{lstlisting}
+    \item \texttt{abline()}：在散点图上添加回归线。例如：
+    \begin{lstlisting}[language=R]
+    abline(lm(Son ~ Father, data = height), lty = 1, lwd = 2)
+    \end{lstlisting}
+    \item \texttt{hist()}：绘制直方图，检查数据分布。例如：
+    \begin{lstlisting}[language=R]
+    hist(height$Father)
+    \end{lstlisting}
+    \item \texttt{density()}：绘制密度图，估计数据分布。例如：
+    \begin{lstlisting}[language=R]
+    plot(density(height$Father))
+    \end{lstlisting}
+    \item \texttt{qqnorm()} 和 \texttt{qqline()}：绘制 Q-Q 图，检查数据是否符合正态分布。例如：
+    \begin{lstlisting}[language=R]
+    qqnorm(height$Father)
+    qqline(height$Father)
+    \end{lstlisting}
+    \item \texttt{pairs()}：生成散点图矩阵，展示多个变量之间的关系。例如：
+    \begin{lstlisting}[language=R]
+    pairs(brainsize[, 2:5])
+    \end{lstlisting}
+    \item \texttt{bwplot()}：绘制箱线图，展示数据分布。例如：
+    \begin{lstlisting}[language=R]
+    bwplot(Expt ~ Speed, data = michelson, main = "Speed of Light Data", ylab = "Experiment No.")
+    \end{lstlisting}
+\end{itemize}
+
+\subsection*{统计检验与回归分析}
+
+\begin{itemize}
+    \item \texttt{lm()}：建立线性回归模型，指定自变量和因变量。例如：
+    \begin{lstlisting}[language=R]
+    linearmodel = lm(BRAIN ~ BODY + GESTATION + LITTER, data = brainsize)
+    \end{lstlisting}
+    \item \texttt{summary()}：提供模型的详细信息，包括回归系数、标准误差、t 值、p 值等统计量。例如：
+    \begin{lstlisting}[language=R]
+    summary(linearmodel)
+    \end{lstlisting}
+    \item \texttt{confint()}：计算回归系数的置信区间。例如：
+    \begin{lstlisting}[language=R]
+    confint(model, level = 1 - alpha)
+    \end{lstlisting}
+    \item \texttt{z.test()}：使用 \texttt{BSDA} 包进行 Z 检验。例如：
+    \begin{lstlisting}[language=R]
+    result = z.test(nail, mu = mu, alternative = c("two.sided"), sigma.x = sigma)
+    \end{lstlisting}
+    \item \texttt{t.test()}：进行 t 检验。例如：
+    \begin{lstlisting}[language=R]
+    result = t.test(nail, mu = mu, alternative = c("two.sided"))
+    \end{lstlisting}
+    \item \texttt{wilcox.test()}：进行 Wilcoxon 秩和检验。例如：
+    \begin{lstlisting}[language=R]
+    result = wilcox.test(Aarea, Barea, exact = TRUE, alternative = c("two.sided"))
+    \end{lstlisting}
+    \item \texttt{chisq.test()}：进行卡方检验。例如：
+    \begin{lstlisting}[language=R]
+    result = chisq.test(table1[, 1:3])
+    \end{lstlisting}
+    \item \texttt{deming()}：进行 Deming 回归，处理误差变量的回归分析。例如：
+    \begin{lstlisting}[language=R]
+    fit2 = deming(aes ~ aas, data = arsenate, xstd = se.aas, ystd = se.aes)
+    \end{lstlisting}
+\end{itemize}
+
+\subsection*{自助法（Bootstrapping）}
+
+\begin{itemize}
+    \item 通过对样本进行有放回抽样，再次计算估计值，并计算这些估计值的分布，用于估计统计量的置信区间。例如：
+    \begin{lstlisting}[language=R]
+    bootstrapestimates = rep(0, bootstrapsize)
+    for (ii in 1:bootstrapsize) {
+        bootstrapsample = rexp(mysamplesize, rate = 1) + mymle
+        bootstrapestimates[ii] = sort(bootstrapsample)[1]
+    }
+    bootstrapquantiles = sort(bootstrapestimates - mymle)
+    lowerquantile = bootstrapquantiles[round(bootstrapsize*alpha*0.5)]
+    upperquantile = bootstrapquantiles[round(bootstrapsize*(1-alpha*0.5))]
+    lowerbound = mymle - upperquantile
+    upperbound = mymle - lowerquantile
+    \end{lstlisting}
+    \item 计算置信区间的上下界，计算方式是将分位数从原始估计值中减去。例如：
+    \begin{lstlisting}[language=R]
+    lowerbound = mymomentestimation - upperquantile
+    upperbound = mymomentestimation - lowerquantile
+    \end{lstlisting}
+\end{itemize}
+
+\subsection*{数据变换与分布检验}
+
+\begin{itemize}
+    \item 对数变换：使用 \texttt{log()} 函数对数据进行对数变换，稳定数据的方差，使数据分布更接近正态分布。例如：
+    \begin{lstlisting}[language=R]
+    plot(density(log(brainsize$BRAIN)))
+    \end{lstlisting}
+    \item \texttt{stem()}：绘制茎叶图，展示数据分布。例如：
+    \begin{lstlisting}[language=R]
+    stem(hills$time)
+    \end{lstlisting}
+    \item \texttt{splom()}：绘制散点图矩阵，展示数据中各个变量的关系。例如：
+    \begin{lstlisting}[language=R]
+    splom(~ hills)
+    \end{lstlisting}
+    \item \texttt{attach()} 和 \texttt{detach()}：使数据集中的变量可以直接使用，避免变量名冲突。例如：
+    \begin{lstlisting}[language=R]
+    attach(hills)
+    detach(hills)
+    \end{lstlisting}
+\end{itemize}
+
+\subsection*{模型残差分析}
+
+\begin{itemize}
+    \item 通过分析模型残差的 Q-Q 图，检查残差是否服从正态分布，进而判断回归模型的适用性。例如：
+    \begin{lstlisting}[language=R]
+    qqnorm(linearmodel$residuals)
+    qqline(linearmodel$residuals)
+    \end{lstlisting}
+\end{itemize}
+
+\subsection*{示例代码与解释}
+
+\begin{itemize}
+    \item 通过具体的 R 代码示例，展示如何进行数据读取、可视化、统计检验、回归分析、自助法等操作。
+    \item 对每段代码进行详细解释，帮助理解每个步骤的目的和实现方法。
+\end{itemize}
+
+\subsection*{总结}
+
+通过这些步骤和知识点的梳理，你可以全面地进行数据分析和回归建模，包括数据读取、可视化、统计检验、自助法、数据变换、分布检验和模型残差分析等。这些是进行数据分析和验证的重要步骤。
+
+
+
+
+
+
+
+
+\end{document}
