@@ -183,6 +183,54 @@
 
     \lstset{style=mystyle}
 
+% 定义R代码的颜色
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% 定义R语言环境
+\lstdefinelanguage{R}{
+    keywords={function, if, else, for, while, repeat, break, return, next,
+              TRUE, FALSE, NULL, Inf, NaN, NA, library, require},
+    sensitive=true,
+    comment=[l]{\#},
+    morestring=[b]",
+    morestring=[b]',
+    alsoletter={.<-},
+    alsoother={_},
+    otherkeywords={!,!=,~,\$,*,\&,\%/\%,\%*\%,\%\%,<-,<<-,_,/}
+}
+
+% 设置代码样式
+\lstset{
+    language=R,
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+
+
+
+
+
+
+
+
 % table 支持
     \usepackage{booktabs}   % 宏包：三线表
     \usepackage{tabularray} % 宏包：表格排版
@@ -959,7 +1007,7 @@ slope_lm - slope_deming    # -0.1283495
 
 
 
-\chapter{12.25}
+\chapter{12.16}
 
 \begin{lstlisting}[language=R]
     # 1. 加载数据
@@ -1038,6 +1086,102 @@ qqline(linearmodel$residuals)  # 添加Q-Q图的参考线，帮助判断残差�
 通过分析模型残差的 Q-Q 图，检查残差是否服从正态分布，进而判断回归模型的适用性。
 
 通过这些步骤，你可以全面地检查数据的分布、回归模型的拟合情况以及变换后数据的正态性。这些是进行线性回归分析和验证的重要步骤。
+
+\cleardoublepage
+\chapter{12.18}
+
+\begin{lstlisting}[language=R]
+    # 读取凝血数据并绘制箱线图，同时进行方差分析
+    coagulation = read.csv("coagulation.csv")  # 读取数据
+    library(lattice)  # 加载 lattice 包用于可视化
+    bwplot(time ~ diet, data = coagulation)  # 绘制时间与饮食组别的箱线图
+    anova(lm(time ~ diet, data = coagulation))  # 方差分析，检验不同饮食组之间是否有显著差异
+    
+    # 分组计算中位数
+    
+    # 方法1：使用 subset 函数对每组进行中位数计算
+    median_A <- median(subset(coagulation, diet == "A", time, drop = T))  # 饮食组 A 的中位数
+    median_B <- median(subset(coagulation, diet == "B", time, drop = T))  # 饮食组 B 的中位数
+    median_C <- median(subset(coagulation, diet == "C", time, drop = T))  # 饮食组 C 的中位数
+    median_D <- median(subset(coagulation, diet == "D", time, drop = T))  # 饮食组 D 的中位数
+    
+    # 方法2：使用 aggregate 函数计算中位数
+    median_time <- aggregate(time ~ diet, data = coagulation, median)  # 按组计算中位数
+    median_time  # 输出结果
+    
+    # Q2: 饮食与体重的分析
+    
+    weight = read.csv(file="diet.csv",header = TRUE)  # 读取体重数据
+    weigthmatrix = as.matrix(weight[,2:5])  # 转换体重数据为矩阵（去除第一列）
+    # 创建因子向量
+    Block = factor(rep(c("B1", "B2", "B3", "B4", "B5"), each = 4))  # 块因子
+    Diet = factor(rep(c("D1", "D2", "D3", "D4"), times = 5))  # 饮食因子
+    # 将矩阵拉长为数据框，并修改列名
+    weightdf = data.frame(Block, Diet, as.numeric(c(t(weigthmatrix))))  # 转换为长格式数据框
+    names(weightdf) = c("Block", "Diet", "Value")  # 修改列名
+    
+    # 进行方差分析
+    results = aov(Value~Block+Diet, data=weightdf)  # 方差分析模型
+    summary(results)  # 输出方差分析结果
+    summary(results)[[1]][["F value"]][2]  # 提取饮食因子的 F 值
+    
+    # 随机置换检验
+    simunumber = 5000  # 随机置换次数
+    fvalue = rep(0, simunumber)  # 存储 F 值的向量
+    fvalue[1] = summary(results)[[1]][["F value"]][2]  # 初始 F 值
+    for (jj in 2:simunumber){
+        tmpmatrix = weigthmatrix  # 创建临时矩阵
+        for (ii in 1:5){
+          # 在每个块内随机重抽样
+          tmpmatrix[ii,] = sample(weigthmatrix[ii,])
+        }
+        tmpdf = data.frame(Block, Diet, as.numeric(c(t(tmpmatrix))))  # 转换为数据框
+        names(tmpdf) = c("Block", "Diet", "Value")  # 修改列名
+        results = aov(Value~Block+Diet, data=tmpdf)  # 重新计算方差分析
+        fvalue[jj]=summary(results)[[1]][["F value"]][2]  # 保存新的 F 值
+    }
+    # 绘制 F 值与 F 分布的 QQ 图
+    qqplot(fvalue, rf(5000, 3, 12))  # 绘制 QQ 图
+    abline(0,1)  # 添加参考线
+    # 计算置换检验的 p 值
+    rank(fvalue)[1]  # 初始 F 值在置换后的排名
+    pperm = 1-rank(fvalue)[1]/simunumber  # p 值计算
+    pperm  # 输出 p 值
+    
+
+\end{lstlisting}
+
+
+\section*{代码解释}
+
+这段R代码主要进行了两个实验数据的统计分析：
+
+\paragraph{第一部分：凝血时间分析(Q1)}
+该部分分析了不同饮食对凝血时间的影响：
+\begin{itemize}
+    \item 通过箱线图(boxplot)直观展示了四种饮食(A、B、C、D)组的凝血时间分布
+    \item 使用单因素方差分析(ANOVA)检验了饮食因素对凝血时间的影响
+    \item 通过两种不同方法（subset和aggregate）计算了各组的中位数，为数据提供了描述性统计特征
+\end{itemize}
+
+\paragraph{第二部分：随机化检验分析(Q2)}
+该部分对饮食实验数据进行了更深入的随机化检验分析：
+\begin{itemize}
+    \item 使用区组设计（Block Design）对数据进行了双因素方差分析，控制了区组效应
+    \item 进行了5000次随机化模拟，每次在保持区组结构不变的情况下，随机打乱每个区组内的处理顺序
+    \item 通过QQ图比较了模拟得到的F统计量与理论F分布的关系
+    \item 最后计算了随机化检验的p值，通过比较原始F值在所有模拟F值中的排序位置来评估处理效应的显著性
+\end{itemize}
+
+\paragraph{分析方法优势}
+这种分析方法的优点在于：
+\begin{itemize}
+    \item 不依赖于正态分布等参数假设
+    \item 通过随机化来构造检验统计量的经验分布
+    \item 特别适用于样本量较小或不满足传统方差分析假设的情况
+    \item 通过比较传统方差分析和随机化检验的结果，可以得到更稳健的统计推断
+\end{itemize}
+
 
 
 

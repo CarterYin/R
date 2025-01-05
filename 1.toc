@@ -8,5 +8,9 @@
 \contentsline {chapter}{\numberline {6}12.02 数据处理与可视化}{9}{chapter.6}%
 \contentsline {chapter}{\numberline {7}12.04 数据处理与回归分析}{11}{chapter.7}%
 \contentsline {chapter}{\numberline {8}12.09}{13}{chapter.8}%
-\contentsline {chapter}{\numberline {9}12.25}{15}{chapter.9}%
-\contentsline {chapter}{\numberline {10}终点}{17}{chapter.10}%
+\contentsline {chapter}{\numberline {9}12.16}{15}{chapter.9}%
+\contentsline {chapter}{\numberline {10}12.18}{17}{chapter.10}%
+\contentsline {paragraph}{第一部分：凝血时间分析(Q1)}{18}{lstnumber.-10.58}%
+\contentsline {paragraph}{第二部分：随机化检验分析(Q2)}{18}{section*.2}%
+\contentsline {paragraph}{分析方法优势}{18}{section*.2}%
+\contentsline {chapter}{\numberline {11}终点}{19}{chapter.11}%
